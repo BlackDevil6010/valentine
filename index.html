@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Special Question</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --rose-primary: #fb7185;
+            --rose-dark: #e11d48;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: #fff1f2;
+            overflow: hidden;
+            touch-action: none;
+        }
+
+        /* Animated Mesh Background */
+        .mesh-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-color: #fff1f2;
+            background-image: 
+                radial-gradient(at 0% 0%, hsla(343,100%,76%,0.3) 0, transparent 50%), 
+                radial-gradient(at 50% 0%, hsla(350,100%,88%,0.3) 0, transparent 50%), 
+                radial-gradient(at 100% 0%, hsla(343,100%,76%,0.3) 0, transparent 50%), 
+                radial-gradient(at 50% 50%, hsla(350,100%,95%,0.5) 0, transparent 50%),
+                radial-gradient(at 0% 100%, hsla(343,100%,76%,0.3) 0, transparent 50%), 
+                radial-gradient(at 100% 100%, hsla(343,100%,76%,0.3) 0, transparent 50%);
+            filter: blur(40px);
+            animation: meshMove 20s ease infinite alternate;
+        }
+
+        @keyframes meshMove {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.2) rotate(5deg); }
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 25px 50px -12px rgba(251, 113, 133, 0.25);
+        }
+
+        #noBtn {
+            transition: transform 0.1s ease-out;
+            will-change: transform;
+        }
+
+        .heart-wing {
+            animation: flutter 2s ease-in-out infinite;
+            transform-origin: center;
+        }
+
+        @keyframes flutter {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(10deg) scale(1.05); }
+        }
+
+        .floating-heart {
+            position: fixed;
+            pointer-events: none;
+            z-index: 10;
+            opacity: 0.6;
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body class="h-screen flex items-center justify-center p-4">
+
+    <div class="mesh-gradient"></div>
+
+    <!-- Screen 1: The Invitation -->
+    <div id="introCard" class="glass-card p-10 rounded-[3rem] w-full max-w-md text-center transform transition-all">
+        <div class="mb-6 inline-flex p-4 bg-rose-100 rounded-full">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#fb7185" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+        </div>
+        <h2 class="text-3xl font-black text-gray-800 mb-2">Wait a moment...</h2>
+        <p class="text-gray-500 font-medium mb-8">Who is this digital love letter for?</p>
+        
+        <div class="space-y-4">
+            <input type="text" id="nameInput" placeholder="Enter their name..." 
+                class="w-full px-6 py-4 rounded-2xl border-2 border-rose-100 focus:border-rose-400 focus:outline-none text-center text-xl font-bold text-gray-700 bg-white transition-all shadow-inner">
+            
+            <button onclick="initiateProposal()" 
+                class="w-full bg-rose-500 hover:bg-rose-600 text-white font-bold py-4 rounded-2xl text-lg shadow-xl shadow-rose-200 transform transition hover:translate-y-[-2px] active:scale-95">
+                Personalize Card ✨
+            </button>
+        </div>
+    </div>
+
+    <!-- Screen 2: The Question -->
+    <div id="proposalCard" class="hidden glass-card p-12 rounded-[4rem] w-full max-w-xl text-center flex flex-col items-center">
+        
+        <!-- Large Interactive Heart Asset -->
+        <div class="mb-10 relative cursor-pointer group" onclick="pulseHeart()">
+            <svg id="mainHeart" width="240" height="240" viewBox="0 0 240 240" class="drop-shadow-2xl transition-transform duration-300 hover:scale-105">
+                <defs>
+                    <linearGradient id="bearSkin" x1="50%" y1="0%" x2="50%" y2="100%">
+                        <stop offset="0%" stop-color="#f5d0ba"/>
+                        <stop offset="100%" stop-color="#d4a373"/>
+                    </linearGradient>
+                </defs>
+                
+                <!-- Bear Ears -->
+                <g>
+                    <circle cx="60" cy="70" r="26" fill="url(#bearSkin)"/>
+                    <circle cx="60" cy="70" r="14" fill="#fbcfe8"/> <!-- pink inner ear -->
+                    <circle cx="180" cy="70" r="26" fill="url(#bearSkin)"/>
+                    <circle cx="180" cy="70" r="14" fill="#fbcfe8"/>
+                </g>
+                
+                <!-- Bear Head -->
+                <circle cx="120" cy="115" r="85" fill="url(#bearSkin)"/>
+                
+                <!-- Cheeks -->
+                <ellipse cx="65" cy="125" rx="12" ry="8" fill="#fda4af" opacity="0.6"/>
+                <ellipse cx="175" cy="125" rx="12" ry="8" fill="#fda4af" opacity="0.6"/>
+                
+                <!-- Eyes -->
+                <g fill="#4a3b32">
+                    <circle cx="85" cy="105" r="9"/>
+                    <circle cx="155" cy="105" r="9"/>
+                    <!-- Sparkle -->
+                    <circle cx="88" cy="102" r="3" fill="white"/>
+                    <circle cx="158" cy="102" r="3" fill="white"/>
+                </g>
+                
+                <!-- Snout Area -->
+                <ellipse cx="120" cy="135" rx="28" ry="20" fill="#fff7ed"/>
+                <path d="M120 128 L120 138" stroke="#4a3b32" stroke-width="2" stroke-linecap="round"/>
+                <path d="M112 138 Q120 145 128 138" stroke="#4a3b32" stroke-width="2" fill="none" stroke-linecap="round"/>
+                <circle cx="120" cy="128" r="8" fill="#4a3b32"/>
+                
+                <!-- Hands Holding Heart -->
+                <circle cx="70" cy="180" r="22" fill="url(#bearSkin)"/>
+                <circle cx="170" cy="180" r="22" fill="url(#bearSkin)"/>
+                
+                <!-- The Heart -->
+                <path d="M120 195 C120 195 70 160 70 130 C70 110 85 100 100 110 C110 117 120 130 120 130 C120 130 130 117 140 110 C155 100 170 110 170 130 C170 160 120 195 120 195 Z" 
+                      fill="#f43f5e" 
+                      stroke="#be123c" 
+                      stroke-width="3"
+                      class="origin-center animate-[pulse_2s_ease-in-out_infinite]"
+                      style="transform-box: fill-box;"/>
+            </svg>
+
+            <!-- Floating particles around heart -->
+            <div class="absolute top-0 right-0 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-black text-rose-500 shadow-lg border-2 border-rose-100 animate-bounce -rotate-12">
+                Poke me! 🐻
+            </div>
+        </div>
+
+        <h1 class="text-4xl md:text-5xl font-black text-gray-800 mb-4 tracking-tight">
+            Hey <span id="vName" class="text-rose-500">Love</span>,
+        </h1>
+        <p class="text-2xl font-semibold text-gray-600 mb-12">Will you be my Valentine?</p>
+
+        <!-- Dynamic Interaction Container -->
+        <div class="relative w-full min-h-[120px] flex items-center justify-center gap-6">
+            <button id="yesBtn" onclick="celebrate()" 
+                class="z-20 bg-rose-500 hover:bg-rose-600 text-white font-black py-5 px-14 rounded-3xl text-2xl shadow-2xl shadow-rose-300 transition-all duration-300 ring-8 ring-rose-50">
+                YES!
+            </button>
+            
+            <button id="noBtn" 
+                class="z-10 bg-white text-gray-400 font-bold py-3 px-8 rounded-2xl border border-gray-100 hover:text-gray-600 transition-colors">
+                No
+            </button>
+        </div>
+
+        <p id="funnyCaption" class="mt-12 text-sm text-gray-400 font-medium italic opacity-0 transition-opacity">
+            Persistence is key... 😉
+        </p>
+    </div>
+
+    <!-- Success Overlay -->
+    <div id="celebration" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-white/40 backdrop-blur-xl">
+        <div class="text-center p-10 max-w-md">
+            <div id="finalEmoji" class="text-9xl mb-8">💖</div>
+            <h2 class="text-5xl font-black text-rose-600 mb-4">I KNEW IT!</h2>
+            <p id="successMsg" class="text-xl text-gray-600 font-bold mb-10">This is going to be the best Valentine's ever.</p>
+            <button onclick="location.reload()" class="bg-gray-800 text-white px-10 py-4 rounded-2xl font-bold hover:bg-black transition-all">
+                Send to someone else
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let yesSize = 1;
+        let noAttempts = 0;
+
+        // Initialize Background Hearts
+        function createFloatingHearts() {
+            for (let i = 0; i < 15; i++) {
+                const heart = document.createElement('div');
+                heart.innerHTML = '❤️';
+                heart.className = 'floating-heart text-2xl';
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.top = Math.random() * 100 + 'vh';
+                document.body.appendChild(heart);
+                
+                gsap.to(heart, {
+                    y: "-=100",
+                    x: "random(-50, 50)",
+                    opacity: 0,
+                    duration: "random(3, 6)",
+                    repeat: -1,
+                    delay: Math.random() * 5,
+                    ease: "none"
+                });
+            }
+        }
+        createFloatingHearts();
+
+        function initiateProposal() {
+            const name = document.getElementById('nameInput').value.trim();
+            if (!name) {
+                gsap.to('#introCard', { x: 10, repeat: 3, yoyo: true, duration: 0.05 });
+                return;
+            }
+
+            document.getElementById('vName').textContent = name;
+            
+            gsap.to('#introCard', { 
+                y: -50, 
+                opacity: 0, 
+                duration: 0.5, 
+                onComplete: () => {
+                    document.getElementById('introCard').classList.add('hidden');
+                    const propCard = document.getElementById('proposalCard');
+                    propCard.classList.remove('hidden');
+                    gsap.fromTo(propCard, 
+                        { scale: 0.8, opacity: 0, y: 50 }, 
+                        { scale: 1, opacity: 1, y: 0, duration: 0.8, ease: "back.out(1.7)" }
+                    );
+                }
+            });
+        }
+
+        const noBtn = document.getElementById('noBtn');
+        const yesBtn = document.getElementById('yesBtn');
+
+        function moveNoButton() {
+            noAttempts++;
+            
+            // 1. Shrink No button
+            const noScale = Math.max(0.5, 1 - (noAttempts * 0.1));
+            // 2. Grow Yes button
+            yesSize += 0.25;
+            
+            document.getElementById('funnyCaption').style.opacity = '1';
+
+            const padding = 50;
+            const containerWidth = window.innerWidth - 200;
+            const containerHeight = window.innerHeight - 200;
+
+            const randomX = (Math.random() - 0.5) * containerWidth;
+            const randomY = (Math.random() - 0.5) * containerHeight;
+
+            gsap.to(noBtn, {
+                x: randomX,
+                y: randomY,
+                scale: noScale,
+                duration: 0.3,
+                ease: "power2.out"
+            });
+
+            gsap.to(yesBtn, {
+                scale: yesSize,
+                duration: 0.3,
+                ease: "back.out(2)"
+            });
+        }
+
+        noBtn.addEventListener('mouseover', moveNoButton);
+        noBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            moveNoButton();
+        });
+
+        function pulseHeart() {
+            gsap.to('#mainHeart', {
+                scale: 1.3,
+                duration: 0.1,
+                yoyo: true,
+                repeat: 1,
+                ease: "power2.inOut"
+            });
+        }
+
+        function celebrate() {
+            const celebration = document.getElementById('celebration');
+            celebration.classList.remove('hidden');
+            
+            gsap.from('#celebration', { opacity: 0, duration: 1 });
+            gsap.from('#finalEmoji', { scale: 0, rotation: 720, duration: 1.5, ease: "back.out(1.2)" });
+            
+            // Firework hearts
+            for(let i=0; i<50; i++) {
+                const h = document.createElement('div');
+                h.innerHTML = ['💖','❤️','✨','🌸','💝'][Math.floor(Math.random()*5)];
+                h.className = 'fixed z-[110] text-3xl pointer-events-none';
+                h.style.left = '50%';
+                h.style.top = '50%';
+                document.body.appendChild(h);
+                
+                const angle = Math.random() * Math.PI * 2;
+                const velocity = 10 + Math.random() * 20;
+                
+                gsap.to(h, {
+                    x: Math.cos(angle) * 500 * Math.random(),
+                    y: Math.sin(angle) * 500 * Math.random(),
+                    rotation: Math.random() * 360,
+                    opacity: 0,
+                    duration: 2 + Math.random() * 2,
+                    ease: "power2.out",
+                    onComplete: () => h.remove()
+                });
+            }
+        }
+
+        // Handle Enter key
+        document.getElementById('nameInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') initiateProposal();
+        });
+    </script>
+</body>
+</html>
